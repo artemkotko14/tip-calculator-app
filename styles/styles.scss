@@ -1,0 +1,318 @@
+@import "./variables";
+@mixin flex-center($direction) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+  align-items: center;
+}
+@mixin text-preset1 {
+  font-size: 3rem; // 48px
+  line-height: 4.4375rem; // 71px
+  letter-spacing: -1px;
+}
+
+@mixin text-preset2 {
+  font-size: 2rem; // 32px
+  line-height: 2.9375rem; // 47px
+  letter-spacing: -0.67px;
+}
+
+@mixin text-preset3 {
+  font-size: 1.5rem; // 24px
+  line-height: 2.25rem; // 36px
+  letter-spacing: 0px;
+}
+
+@mixin text-preset4 {
+  font-size: 1.25rem; // 20px
+  line-height: 1.875rem; // 30px
+  letter-spacing: 0px;
+}
+
+@mixin text-preset5 {
+  font-size: 1rem; // 16px
+  line-height: 1.5rem; // 24px
+  letter-spacing: 0px;
+}
+
+@mixin text-preset6 {
+  font-size: 0.8125rem; // 13px
+  line-height: 1.1875rem; // 19px
+  letter-spacing: 0px;
+}
+@mixin active-button {
+  background-color: $green200;
+  color: $green900;
+  cursor: pointer;
+}
+.active-button {
+  @include active-button;
+}
+@mixin inactive-button {
+  background-color: $green750;
+  color: $green800;
+  cursor: auto;
+  outline: none;
+}
+.inactive-button {
+  @include inactive-button;
+}
+@function rem($px, $base: 16) {
+  @return ($px / $base) * 1rem;
+} // converts px to rem
+
+body {
+  background-color: $green200;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+main {
+  @include flex-center(column);
+  margin: 0;
+  padding: 0;
+  min-height: 100svh;
+}
+.logo {
+  padding-top: 3.125rem;
+  padding-bottom: 2.5rem;
+}
+.calculator {
+  background-color: $white;
+  border-radius: 15px;
+  padding: 1.5rem 2.125rem;
+}
+.bill-container {
+  padding: 0 0.5rem;
+}
+.bill-header,
+.tip-container {
+  margin-bottom: 2rem;
+}
+.bill-header_input-wrapper,
+.people-container_input-wrapper {
+  @include flex-center(row);
+  justify-content: space-between;
+  background-color: $grey50;
+  border-radius: 0.5rem;
+  padding: 0 1.15rem;
+  min-height: rem(48);
+  & input {
+    border: none;
+    text-align: right;
+    @include text-preset3;
+    color: $green900;
+    opacity: 60%;
+    outline: none;
+    box-shadow: none;
+    background-color: inherit;
+  }
+  & input:hover {
+    cursor: pointer;
+  }
+}
+/* When error, always prioritize red border */
+.bill-header_input-wrapper.error-border,
+.people-container_input-wrapper.error-border {
+  border: 2px solid $orange400;
+}
+
+/* Only apply green hover/focus when NOT in error */
+.bill-header_input-wrapper:hover:not(.error-border),
+.bill-header_input-wrapper:focus-within:not(.error-border),
+.people-container_input-wrapper:hover:not(.error-border),
+.people-container_input-wrapper:focus-within:not(.error-border) {
+  border: 2px solid $green400;
+  cursor: pointer;
+}
+
+.bill-header_title,
+.people-container_title {
+  @include text-preset5;
+  color: $grey500;
+  margin-bottom: 0.5rem;
+}
+
+.tip-container {
+  width: 100%;
+  & p {
+    @include text-preset5;
+    color: $grey500;
+    margin-bottom: 0.5rem;
+  }
+}
+.tip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.tip-grid button {
+  padding: 0.5rem;
+  border: none;
+  background-color: $green900;
+  color: $white;
+  @include text-preset3;
+  border-radius: rem(5);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.chosen-button {
+  background-color: $green400 !important;
+  color: $green900 !important;
+  & #customInput {
+    color: $green900 !important;
+  }
+}
+#customButton {
+  background-color: $grey50;
+  color: $grey550;
+  position: relative;
+  overflow: hidden;
+}
+
+#customText {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+#customInput {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  width: 100%;
+  height: 60%;
+  opacity: 0;
+  pointer-events: none; /* Prevents user interaction with the input (disabled) */
+  border: none;
+  background: transparent;
+  text-align: center;
+  @include text-preset3;
+  color: $grey550;
+  transition: opacity 0.3s, transform 0.3s;
+}
+#customInput::placeholder {
+  @include text-preset5;
+}
+#customInput:focus {
+  outline: none; //removes input borders
+}
+
+//Removes arrows in the input
+#customInput::-webkit-outer-spin-button,
+#customInput::-webkit-inner-spin-button {
+  -webkit-appearance: none; /* Disables the spin button in WebKit browsers (Chrome, Safari) */
+  margin: 0; /* Remove any margins applied by the browser */
+}
+#customInput[type="number"] {
+  appearance: none; /* Standard way to hide the spinner in modern browsers */
+}
+
+.tip-grid button:hover,
+.tip-grid button:focus {
+  background-color: $green200;
+  color: $green900;
+  outline: none;
+}
+.error {
+  color: $orange400;
+  @include text-preset5;
+  margin-bottom: 0.5rem;
+  display: none;
+}
+.not-a-number {
+  display: none;
+}
+
+.label-error-container {
+  @include flex-center(row);
+  justify-content: space-between;
+}
+
+.result-container {
+  background-color: $green900;
+  @include flex-center(column);
+  border-radius: 1rem;
+  padding: 1.84rem 1.44rem;
+  margin-top: 2rem;
+}
+
+.result-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  & h3 {
+    color: $white;
+    @include text-preset5;
+  }
+  & p {
+    color: $grey400;
+    @include text-preset6;
+  }
+  & output {
+    @include text-preset2;
+    color: $green400;
+  }
+}
+
+.reset-button {
+  width: 100%;
+  border: none;
+  text-transform: uppercase;
+  padding: 0.5rem 2rem;
+  border-radius: 4px;
+  margin-top: 2rem;
+  min-height: rem(48);
+  @include text-preset4;
+}
+
+@media (min-width: 600px) {
+  .calculator {
+    padding: 3.3rem 4.7rem;
+    min-width: 38rem;
+  }
+  .tip-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .result-container {
+    padding: rem(43) rem(47.5);
+  }
+  .result-row hgroup {
+    padding: rem(8) rem(0) rem(14);
+  }
+}
+
+@media (min-width: 1024px) {
+  .calculator {
+    @include flex-center(row);
+    gap: 1.5rem;
+    height: 100%;
+    min-width: 57.5rem;
+    padding: 2rem 2.5rem;
+  }
+  .bill-container {
+    min-height: 26rem;
+    flex: 1;
+    padding: 1rem 0;
+    @include flex-center(column);
+    justify-content: space-between;
+  }
+  .result-container {
+    margin: 0;
+    min-height: 26rem;
+    flex: 1;
+    justify-content: space-between;
+    padding: rem(37.5) rem(40);
+  }
+  .result-grid {
+    gap: 2rem;
+  }
+}

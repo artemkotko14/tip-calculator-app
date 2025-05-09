@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- displays site properly based on user's device -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles/reset.css" />
+  <link rel="stylesheet" href="styles/styles.css" />
+
+  <title>Frontend Mentor | Tip calculator app</title>
+
+
+</head>
+
+<body>
+  <main>
+    <img class="logo" src="images/logo.svg" alt="logo">
+    <div class="calculator">
+      <div class="bill-container">
+
+        <div class="bill-header">
+          <form action="">
+            <div class="label-error-container">
+              <label class='bill-header_title' for="billInput">Bill</label>
+              <div class="error zero">
+                Can't be zero
+              </div>
+              <div class="error not-a-number">
+                Invalid value
+              </div>
+            </div>
+            <div class="bill-header_input-wrapper">
+              <img src="images/icon-dollar.svg" alt="logo">
+              <input type="text" id="billInput" autocomplete="off" placeholder="0">
+            </div>
+          </form>
+        </div>
+        <div class="tip-container">
+          <p>Select Tip %</p>
+          <div class="tip-grid">
+            <button>5%</button>
+            <button>10%</button>
+            <button>15%</button>
+            <button>25%</button>
+            <button>50%</button>
+            <button id="customButton">
+              <span id="customText">Custom</span>
+              <input type="number" id="customInput" autocomplete="off" placeholder="Enter tip">
+            </button>
+
+          </div>
+        </div>
+
+        <div class="people-container">
+          <form action="">
+            <div class="label-error-container">
+              <label class='people-container_title' for="peopleNumberInput">Number of People</label>
+              <div class="error zero">
+                Can't be zero
+              </div>
+              <div class="error not-a-number">
+                Invalid value
+              </div>
+            </div>
+            <div class="people-container_input-wrapper">
+              <img src="images/icon-person.svg" alt="logo">
+              <input type="text" id="peopleNumberInput" autocomplete="off" placeholder="0">
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="result-container">
+        <div class="result-grid">
+          <div class="result-row">
+            <hgroup>
+              <h3>Tip Amount</h3>
+              <p>/ person</p>
+            </hgroup>
+            <output id="calcResultTip">$0.00</output>
+          </div>
+          <div class="result-row">
+            <hgroup>
+              <h3>Total</h3>
+              <p>/ person</p>
+            </hgroup>
+            <output id="calcResultTotal">$0.00</output>
+          </div>
+        </div>
+        <button class="reset-button inactive-button">Reset</button>
+      </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+
+</html>
