@@ -60,7 +60,11 @@
 @function rem($px, $base: 16) {
   @return ($px / $base) * 1rem;
 } // converts px to rem
-
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
 body {
   background-color: $grey200;
   font-family: "Space Mono", monospace;
@@ -314,5 +318,50 @@ main {
   }
   .result-grid {
     gap: 2rem;
+  }
+}
+//For very small devices
+@media (max-width: 370px) {
+  .calculator {
+    padding: 1rem 0.5rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tip-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #customButton {
+    max-width: 100%;
+  }
+
+  html,
+  body {
+    overflow-x: hidden; //hiding anything that overflows the width of the element
+  }
+  .bill-header_input-wrapper,
+  .people-container_input-wrapper {
+    padding: 0 0.75rem;
+    min-height: 2.5rem;
+  }
+
+  .bill-header_input-wrapper input,
+  .people-container_input-wrapper input {
+    font-size: 1.125rem;
+  }
+  .tip-grid button {
+    font-size: 1.125rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  #customInput {
+    font-size: 1.125rem;
+  }
+
+  .reset-button {
+    font-size: 1rem;
+    padding: 0.5rem;
   }
 }
