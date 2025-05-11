@@ -12,6 +12,7 @@ This is a solution to the [Tip calculator app challenge on Frontend Mentor](http
   - [Built with](#built-with)
   - [What I learned](#what-i-learned)
   - [Continued development](#continued-development)
+  - [Useful resources](#useful-resources)
 - [Author](#author)
 
 ## Overview
@@ -73,6 +74,10 @@ inputField.dataset.valid = isValid ? "true" : "false";
 ### Continued development
 
 I future projects I would like to focus on reduce repetition in event handlers (Code reuse) and keep refining user input checks and feedback(Form validation).
+
+### Useful resources
+
+- (https://validator.w3.org/) - Markup Validation Service.
 
 ## Author
 

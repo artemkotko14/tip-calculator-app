@@ -115,18 +115,24 @@ main {
     cursor: pointer;
   }
 }
-/* When error, always prioritize red border */
+.bill-header_input-wrapper,
+.people-container_input-wrapper {
+  border: 2px solid transparent; // Always reserve space for border
+  transition: border-color 0.2s ease;
+}
+
+/* Show orange border when in error */
 .bill-header_input-wrapper.error-border,
 .people-container_input-wrapper.error-border {
   border: 2px solid $orange400;
 }
 
-/* Only apply green hover/focus when NOT in error */
+/* Show green border on hover/focus only if NOT in error */
 .bill-header_input-wrapper:hover:not(.error-border),
 .bill-header_input-wrapper:focus-within:not(.error-border),
 .people-container_input-wrapper:hover:not(.error-border),
 .people-container_input-wrapper:focus-within:not(.error-border) {
-  border: 2px solid $green400;
+  border-color: $green400;
   cursor: pointer;
 }
 
