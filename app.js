@@ -71,27 +71,41 @@ document.addEventListener("click", function (e) {
   }
 });
 
-billAmount.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
+// billAmount.addEventListener("keydown", (e) => {
+//   if (e.key === "Enter") {
+//     e.preventDefault();
 
-    // Prevent if input is invalid
-    if (billAmount.dataset.valid !== "true") {
-      return;
+//     // Prevent if input is invalid
+//     if (billAmount.dataset.valid !== "true") {
+//       return;
+//     }
+//   }
+// });
+
+// peopleNumber.addEventListener("keydown", (e) => {
+//   if (e.key === "Enter") {
+//     e.preventDefault();
+
+//     // Prevent if input is invalid
+//     if (peopleNumber.dataset.valid !== "true") {
+//       return;
+//     }
+//   }
+// });
+function handleEnterKeyFor(inputField) {
+  inputField.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (inputField.dataset.valid !== "true") return;
+
+      const validatedInputs = getValidatedInputs();
+      if (validatedInputs) reset();
     }
-  }
-});
+  });
+}
 
-peopleNumber.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-
-    // Prevent if input is invalid
-    if (peopleNumber.dataset.valid !== "true") {
-      return;
-    }
-  }
-});
+handleEnterKeyFor(billAmount);
+handleEnterKeyFor(peopleNumber);
 
 function clearInput(inputElement) {
   if (inputElement && inputElement.tagName === "INPUT") {
