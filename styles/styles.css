@@ -131,7 +131,8 @@ main {
   gap: 1rem;
 }
 
-.tip-grid button {
+.tip-grid button,
+.customButton {
   padding: 0.5rem;
   border: none;
   background-color: hsl(183, 100%, 15%);
@@ -139,6 +140,7 @@ main {
   font-size: 1.5rem;
   line-height: 2.25rem;
   letter-spacing: 0px;
+  text-align: center;
   border-radius: 0.3125rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -371,7 +373,8 @@ main {
     padding: 0.4rem 0.5rem;
     border-radius: 0.25rem;
   }
-  #customInput {
+  #customInput,
+  #customText {
     font-size: 1.125rem;
   }
   .reset-button {

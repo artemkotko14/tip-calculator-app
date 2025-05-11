@@ -157,12 +157,14 @@ main {
   gap: 1rem;
 }
 
-.tip-grid button {
+.tip-grid button,
+.customButton {
   padding: 0.5rem;
   border: none;
   background-color: $green900;
   color: $white;
   @include text-preset3;
+  text-align: center;
   border-radius: rem(5);
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -362,7 +364,8 @@ main {
     border-radius: 0.25rem;
   }
 
-  #customInput {
+  #customInput,
+  #customText {
     font-size: 1.125rem;
   }
 

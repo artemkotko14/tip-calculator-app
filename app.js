@@ -71,27 +71,6 @@ document.addEventListener("click", function (e) {
   }
 });
 
-// billAmount.addEventListener("keydown", (e) => {
-//   if (e.key === "Enter") {
-//     e.preventDefault();
-
-//     // Prevent if input is invalid
-//     if (billAmount.dataset.valid !== "true") {
-//       return;
-//     }
-//   }
-// });
-
-// peopleNumber.addEventListener("keydown", (e) => {
-//   if (e.key === "Enter") {
-//     e.preventDefault();
-
-//     // Prevent if input is invalid
-//     if (peopleNumber.dataset.valid !== "true") {
-//       return;
-//     }
-//   }
-// });
 function handleEnterKeyFor(inputField) {
   inputField.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -114,24 +93,22 @@ function clearInput(inputElement) {
 }
 
 tipButtons.forEach((button) => {
-  // Skip the custom button because it has its own logic
-  if (button.id !== "customButton") {
-    button.addEventListener("click", () => {
-      tipButtons.forEach((btn) => btn.classList.remove("chosen-button"));
-      button.classList.add("chosen-button");
+  button.addEventListener("click", () => {
+    tipButtons.forEach((btn) => btn.classList.remove("chosen-button"));
+    customButton.classList.remove("chosen-button"); // Also remove from custom
+    button.classList.add("chosen-button");
 
-      // Reset custom input
-      customInput.value = "";
-      customTipSubmitted = false;
-      closeInput();
+    // Reset custom input
+    customInput.value = "";
+    customTipSubmitted = false;
+    closeInput();
 
-      const value = button.textContent.replace("%", "").trim();
-      const validatedInputs = getValidatedInputs();
-      if (validatedInputs) {
-        reset(); // Perform calculation
-      }
-    });
-  }
+    const value = button.textContent.replace("%", "").trim();
+    const validatedInputs = getValidatedInputs();
+    if (validatedInputs) {
+      reset(); // Perform calculation
+    }
+  });
 });
 
 // For customed tip
