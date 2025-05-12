@@ -10,7 +10,6 @@ const tipButtons = document.querySelectorAll(".tip-grid > button");
 const tipAmount = document.getElementById("calcResultTip");
 const total = document.getElementById("calcResultTotal");
 
-let customTipSubmitted = false;
 resetButton.disabled = true;
 
 customButton.addEventListener("click", function (e) {
@@ -18,17 +17,24 @@ customButton.addEventListener("click", function (e) {
   openInput();
 });
 
-let previousCustomTip = "";
-let previousCustomTipText = "Custom";
+document.addEventListener("DOMContentLoaded", () => {
+  // Prevent all forms from submitting
+  document.querySelectorAll("form").forEach((form) => {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault(); // Prevent page reload/submit
+    });
+  });
+});
 
 let customInputFocused = false;
 // When input gets focus
 customInput.addEventListener("focus", function () {
   customInputFocused = true;
-  customButton.classList.remove("chosen-button");
-  previousCustomTip = customInput.value.trim();
-  previousCustomTipText = customInput.value.trim();
-  customInput.value = "";
+  // Only remove chosen-button if input is empty
+  if (customInput.value.trim() === "") {
+    customButton.classList.remove("chosen-button");
+  }
+
   openInput();
 });
 
@@ -36,55 +42,37 @@ customInput.addEventListener("focus", function () {
 customInput.addEventListener("blur", function () {
   customInputFocused = false;
 
-  const value = customInput.value.trim();
-  const isValid = customInput.dataset.valid === "true";
+  const raw = customInput.value;
 
-  if (!value || !isValid) {
-    // Input is empty or invalid
-    customInput.value = previousCustomTip;
-
-    if (previousCustomTip && previousCustomTip !== "") {
-      customButton.classList.add("chosen-button");
-      customTipSubmitted = true;
-      customText.textContent = previousCustomTipText;
-    } else {
-      customButton.classList.remove("chosen-button");
-      customTipSubmitted = false;
-      customText.textContent = "Custom";
-    }
-
-    closeInput();
-    return;
+  if (raw.trim() === "") {
+    customText.textContent = "Custom";
+    customInput.value = ""; // Leave blank
+  } else {
+    // Trim leading zeros, but keep a single zero if all were zeros
+    const trimmed = raw.replace(/^0+/, "");
+    customInput.value = trimmed === "" ? "0" : trimmed;
+    customText.textContent = customInput.value;
   }
 
-  // If valid value but NOT submitted
-  if (!customTipSubmitted) {
-    customInput.value = previousCustomTip;
-    closeInput();
-  }
+  closeInput();
 });
 
-// When you click outside
-document.addEventListener("click", function (e) {
-  if (!customButton.contains(e.target) && customTipSubmitted === false) {
-    closeInput();
-  }
+billAmount.addEventListener("blur", function () {
+  const formattedValue = formatToTwoDecimals(billAmount.value);
+  billAmount.value = formattedValue;
+  calculate();
 });
 
-function handleEnterKeyFor(inputField) {
-  inputField.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (inputField.dataset.valid !== "true") return;
-
-      const validatedInputs = getValidatedInputs();
-      if (validatedInputs) reset();
-    }
+function handleLiveInput(inputField) {
+  inputField.addEventListener("input", () => {
+    checkIfReadyToReset();
+    calculate();
   });
 }
 
-handleEnterKeyFor(billAmount);
-handleEnterKeyFor(peopleNumber);
+handleLiveInput(billAmount);
+handleLiveInput(peopleNumber);
+handleLiveInput(customInput);
 
 function clearInput(inputElement) {
   if (inputElement && inputElement.tagName === "INPUT") {
@@ -100,43 +88,42 @@ tipButtons.forEach((button) => {
 
     // Reset custom input
     customInput.value = "";
-    customTipSubmitted = false;
+
     closeInput();
 
     const value = button.textContent.replace("%", "").trim();
-    const validatedInputs = getValidatedInputs();
-    if (validatedInputs) {
-      reset(); // Perform calculation
-    }
-  });
-});
-
-// For customed tip
-customInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    tipButtons.forEach((btn) => btn.classList.remove("chosen-button"));
-
-    if (customInput.dataset.valid !== "true") {
-      return;
-    }
-
-    customButton.classList.add("chosen-button");
-    customTipSubmitted = true;
     checkIfReadyToReset();
-  }
+    calculate();
+  });
 });
 
 function validateCustomInput(inputField) {
   inputField.addEventListener("input", function () {
-    const currentValue = inputField.value.trim();
+    let currentValue = inputField.value.trim();
+
+    // 💥 Limit to 3 digits max
+    if (currentValue.length > 3) {
+      currentValue = currentValue.slice(0, 3);
+      inputField.value = currentValue;
+    }
 
     // Valid if it only contains digits (whole positive numbers)
     const isValid = /^\d+$/.test(currentValue);
 
     inputField.dataset.valid = isValid ? "true" : "false";
+
+    // If input is valid, deselect all tip buttons and mark custom as chosen
+    if (isValid) {
+      tipButtons.forEach((btn) => btn.classList.remove("chosen-button"));
+      customButton.classList.add("chosen-button");
+    } else if (currentValue === "") {
+      // If input is empty again, remove chosen class from custom
+      customButton.classList.remove("chosen-button");
+    }
+
+    checkIfReadyToReset();
+    calculate();
   });
-  checkIfReadyToReset();
 }
 
 validateCustomInput(customInput);
@@ -162,9 +149,6 @@ customInput.addEventListener("paste", function (e) {
 });
 
 function openInput() {
-  if (customTipSubmitted) {
-    customTipSubmitted = false;
-  }
   customInput.style.opacity = "1";
   customInput.style.pointerEvents = "auto";
   customInput.style.transform = "translate(-50%, -50%) scale(1)";
@@ -179,12 +163,9 @@ function closeInput() {
   customInput.style.transform = "translate(-50%, -50%) scale(0.8)";
   customText.style.opacity = "1";
   customText.style.transform = "scale(1)";
-  if (!customTipSubmitted) {
-    customInput.value = "";
+  if (customInput.value.trim() === "") {
     customText.textContent = "Custom";
   }
-
-  checkIfReadyToReset();
 }
 
 // Turn HTMLCollection into an array
@@ -197,18 +178,6 @@ Array.from(notNumberErrors).forEach((errorElement) => {
   }
 });
 
-//checks if calculator has all three values
-function checkIfReadyToReset() {
-  const validatedInputs = getValidatedInputs();
-
-  if (validatedInputs) {
-    resetButton.classList.replace("inactive-button", "active-button");
-    resetButton.disabled = false;
-  } else {
-    resetButton.classList.replace("active-button", "inactive-button");
-    resetButton.disabled = true;
-  }
-}
 function validateInput(inputField, notNumberErrorElement) {
   inputField.addEventListener("input", function () {
     const currentValue = inputField.value.trim(); // Get the current value
@@ -253,9 +222,8 @@ function validateInput(inputField, notNumberErrorElement) {
       inputField.dataset.valid = "true";
       wrapper?.classList.remove("error-border");
     }
-
-    // Re-check whether the reset button should be active
     checkIfReadyToReset();
+    calculate();
   });
 }
 
@@ -276,13 +244,14 @@ function getValidatedInputs() {
 
   if (selectedButton) {
     if (selectedButton.id === "customButton") {
-      // Only use custom tip if it's submitted and valid
-      if (customTipSubmitted && customInput.dataset.valid === "true") {
+      if (customInput.dataset.valid === "true") {
         tip = parseFloat(customInput.value);
       }
     } else {
       tip = parseFloat(selectedButton.textContent.replace("%", "").trim());
     }
+  } else if (customInput.dataset.valid === "true") {
+    tip = parseFloat(customInput.value);
   }
 
   const billValid = billAmount.dataset.valid === "true";
@@ -296,26 +265,45 @@ function getValidatedInputs() {
   return null;
 }
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault(); // Prevent native form submission
-
-    const activeElement = document.activeElement;
-
-    // Check if the focused element is one of the tip buttons
-    if ([...tipButtons].includes(activeElement)) {
-      activeElement.click(); // Trigger tip button behavior (class toggling)
-    }
-
-    const validatedInputs = getValidatedInputs();
-    if (validatedInputs) {
-      reset(); // Perform calculation
-    }
-  }
-});
-
 resetButton.addEventListener("click", () => {
-  reset();
+  // Clear all inputs
+  billAmount.value = "";
+  peopleNumber.value = "";
+  customInput.value = "";
+  customText.textContent = "Custom";
+
+  // Clear tip selection
+  tipButtons.forEach((btn) => btn.classList.remove("chosen-button"));
+  customButton.classList.remove("chosen-button");
+
+  // Clear visual errors and styling
+  const errorWrappers = document.querySelectorAll(".error-border");
+  errorWrappers.forEach((wrapper) => wrapper.classList.remove("error-border"));
+
+  Array.from(notNumberErrors).forEach((error) => {
+    error.style.display = "none";
+  });
+
+  const zeroErrors = document.querySelectorAll(".error.zero");
+  zeroErrors.forEach((zeroError) => {
+    zeroError.style.display = "none";
+  });
+
+  // Reset data-valid flags
+  billAmount.dataset.valid = "false";
+  peopleNumber.dataset.valid = "false";
+  customInput.dataset.valid = "false";
+
+  // Clear results
+  tipAmount.textContent = "0.00";
+  total.textContent = "0.00";
+
+  // Reset custom input UI
+  closeInput();
+
+  // Disable reset button again
+  resetButton.disabled = true;
+  resetButton.classList.replace("active-button", "inactive-button");
 });
 
 function cutZeros(input) {
@@ -323,27 +311,59 @@ function cutZeros(input) {
     input.value = input.value.replace(/^0+/, "");
   }
 }
+function checkIfReadyToReset() {
+  const billHasValue = billAmount.value.trim() !== "";
+  const peopleHasValue = peopleNumber.value.trim() !== "";
+  const customHasValue = customInput.value.trim() !== "";
 
-function reset() {
+  const anyInputFilled = billHasValue || peopleHasValue || customHasValue;
+  const anyTipSelected =
+    document.querySelector(".tip-grid .chosen-button") !== null;
+
+  if (anyInputFilled || anyTipSelected) {
+    resetButton.classList.replace("inactive-button", "active-button");
+    resetButton.disabled = false;
+  } else {
+    resetButton.disabled = true;
+    resetButton.classList.replace("active-button", "inactive-button");
+  }
+}
+
+function calculate() {
   const validatedInputs = getValidatedInputs();
-  if (!validatedInputs) return;
+  if (!validatedInputs) {
+    // Set to 0.00 if inputs are invalid or incomplete
+    tipAmount.textContent = "0.00";
+    total.textContent = "0.00";
+    return;
+  }
 
-  // Format the value of bill to two decimals only after submission
-  const formattedValue = formatToTwoDecimals(billAmount.value);
-  billAmount.value = formattedValue;
+  // Format the value of bill to two decimals
+  if (document.activeElement !== billAmount) {
+    const formattedValue = formatToTwoDecimals(billAmount.value);
+    billAmount.value = formattedValue;
+  }
 
   //Check for zeros in the begining of People Number
   cutZeros(peopleNumber);
 
-  //Check for zeros in the begining of customInput
-  cutZeros(customInput);
-
   const { bill, people, tip } = validatedInputs;
 
+  // If custom input is selected, use the custom value
+  const customTip =
+    customInput.dataset.valid === "true" ? parseFloat(customInput.value) : 0;
+  const resultTip = customTip || tip;
+
   //Calculations
-  const tipTotal = bill * (tip / 100);
+  const tipTotal = bill * (resultTip / 100);
   const tipPerPerson = tipTotal / people;
   const totalPerPerson = (bill + tipTotal) / people;
-  tipAmount.textContent = tipPerPerson.toFixed(2);
-  total.textContent = totalPerPerson.toFixed(2);
+
+  // Safely display tip and total per person, showing "0.00" if result is invalid (NaN)
+  tipAmount.textContent = isNaN(tipPerPerson)
+    ? "0.00"
+    : tipPerPerson.toFixed(2);
+  total.textContent = isNaN(totalPerPerson)
+    ? "0.00"
+    : totalPerPerson.toFixed(2);
 }
