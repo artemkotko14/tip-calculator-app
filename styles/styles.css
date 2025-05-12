@@ -200,16 +200,18 @@ main {
   outline: none;
 }
 
-#customInput::-webkit-outer-spin-button,
-#customInput::-webkit-inner-spin-button {
+#customInput[type=number]::-webkit-outer-spin-button,
+#customInput[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none; /* Disables the spin button in WebKit browsers (Chrome, Safari) */
   margin: 0; /* Remove any margins applied by the browser */
 }
 
-#customInput[type=number] {
+#customInput[type=number],
+#customInput[type=number]:hover,
+#customInput[type=number]:focus {
   -webkit-appearance: none;
-     -moz-appearance: none;
           appearance: none; /* Standard way to hide the spinner in modern browsers */
+  -moz-appearance: textfield;
 }
 
 .tip-grid button:hover,
