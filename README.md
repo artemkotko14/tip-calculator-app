@@ -71,6 +71,22 @@ I learned how to use data attributes to track input validation states directly i
 inputField.dataset.valid = isValid ? "true" : "false";
 ```
 
+Universal solution for removing arrows in the input:
+
+```css
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type="number"],
+input[type="number"]:hover,
+input[type="number"]:focus {
+  appearance: none;
+  -moz-appearance: textfield;
+}
+```
+
 ### Continued development
 
 I future projects I would like to focus on reduce repetition in event handlers (Code reuse) and keep refining user input checks and feedback(Form validation).
